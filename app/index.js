@@ -5,20 +5,20 @@ const cuid = require('cuid')
 require('dotenv').config()
 
 const processBody = (body, link, resource = 'Al Jazeera') => {
-  let formattedBody = ''
+  let formattedBody = '';
 
-  if (body !== null) {
-    formattedBody += `<p>${body}</p><br><br><ul><li><a href='${link}'>Visit ${resource}</a></li></ul>`
+  if (body) {
+    // Wrap the body in <p> tags and add the resource link
+    formattedBody += body.replace(/<br\s*\/?>/gi, '</p><p>');
+    formattedBody = `<p>${formattedBody}</p>`;
   }
 
-  if (link && !body) {
-    formattedBody += `<br><br><ul><li><a href='${link}'>Visit ${resource}</a></li></ul>`
-  } else if (!link && !body) {
-    formattedBody = ''
-  }
+  // Always add the resource link at the end
+  formattedBody += `<br><br><ul><li><a href='${link}'>Visit ${resource}</a></li></ul>`;
 
-  return formattedBody
-}
+  return formattedBody;
+};
+
 
 ;(async () => {
   const client = new Client({
@@ -35,7 +35,7 @@ const processBody = (body, link, resource = 'Al Jazeera') => {
     ])
     console.log('Truncated existing articles with resource "Al Jazeera".')
 
-    const browser = await chromium.launch({ headless: false })
+    const browser = await chromium.launch({ headless: true })
     const page = await browser.newPage()
 
     console.log('Navigating to Al Jazeera website...')
